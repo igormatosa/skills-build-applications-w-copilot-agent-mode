@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react';
-import { fetchResource } from '../utils/api';
+import { codespaceName, fetchJson } from '../utils/api';
+
+// Fallback to localhost avoids an invalid https://undefined-8000... URL when VITE_CODESPACE_NAME is unset.
+const API_URL = codespaceName
+  ? `https://${codespaceName}-8000.app.github.dev/api/teams/`
+  : 'http://localhost:8000/api/teams/';
 
 function Teams() {
   const [teams, setTeams] = useState([]);
@@ -7,7 +12,7 @@ function Teams() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchResource('teams')
+    fetchJson(API_URL)
       .then(setTeams)
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));

@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react';
-import { fetchResource } from '../utils/api';
+import { codespaceName, fetchJson } from '../utils/api';
+
+// Fallback to localhost avoids an invalid https://undefined-8000... URL when VITE_CODESPACE_NAME is unset.
+const API_URL = codespaceName
+  ? `https://${codespaceName}-8000.app.github.dev/api/workouts/`
+  : 'http://localhost:8000/api/workouts/';
 
 function Workouts() {
   const [workouts, setWorkouts] = useState([]);
@@ -7,7 +12,7 @@ function Workouts() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchResource('workouts')
+    fetchJson(API_URL)
       .then(setWorkouts)
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
